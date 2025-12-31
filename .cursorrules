@@ -1,0 +1,211 @@
+# 프로젝트 규칙
+
+## 기술 스택
+- Next.js 16 (App Router)
+- React 19
+- TypeScript 5
+- Tailwind CSS 4
+
+## TypeScript 규칙
+
+### 타입 정의
+- 모든 컴포넌트와 함수에 명시적 타입을 지정하세요
+- `any` 타입 사용을 최소화하고, `unknown`을 우선 고려하세요
+- 인터페이스는 `interface`를, 타입 별칭은 `type`을 사용하세요
+- Props 타입은 컴포넌트 파일 내부에 정의하세요
+
+### 예시
+```typescript
+// 좋은 예
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary';
+}
+
+export function Button({ label, onClick, variant = 'primary' }: ButtonProps) {
+  // ...
+}
+
+// 나쁜 예
+export function Button(props: any) {
+  // ...
+}
+```
+
+## Next.js 규칙
+
+### App Router 사용
+- `app/` 디렉토리 구조를 따르세요
+- 서버 컴포넌트를 기본으로 사용하고, 클라이언트 컴포넌트는 필요할 때만 `'use client'`를 사용하세요
+- 라우트는 폴더 구조로 정의하세요 (`app/about/page.tsx` → `/about`)
+
+### 파일 네이밍
+- 페이지: `page.tsx`
+- 레이아웃: `layout.tsx`
+- 로딩: `loading.tsx`
+- 에러: `error.tsx`
+- API 라우트: `route.ts`
+
+### 메타데이터
+- 각 페이지에 적절한 메타데이터를 설정하세요
+- `layout.tsx`에서 기본 메타데이터를 정의하고, 페이지별로 오버라이드하세요
+
+### 예시
+```typescript
+// app/about/page.tsx
+export const metadata = {
+  title: 'About Us',
+  description: 'Learn more about our company',
+};
+
+export default function AboutPage() {
+  return <div>About</div>;
+}
+```
+
+## 컴포넌트 규칙
+
+### 컴포넌트 구조
+- 컴포넌트는 `components/` 디렉토리에 저장하세요
+- 각 컴포넌트는 별도 파일로 분리하세요
+- 컴포넌트 이름은 PascalCase를 사용하세요
+- 파일명은 컴포넌트 이름과 동일하게 하세요
+
+### 컴포넌트 작성 규칙
+- 함수형 컴포넌트를 사용하세요
+- Props는 구조 분해 할당으로 받으세요
+- 기본값은 함수 매개변수에서 설정하세요
+- 조건부 렌더링은 명확하게 작성하세요
+
+### 예시
+```typescript
+// components/Button.tsx
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+export function Button({ 
+  children, 
+  onClick, 
+  disabled = false,
+  className = '' 
+}: ButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`px-4 py-2 rounded ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+### 컴포넌트 분리 원칙
+- 재사용 가능한 컴포넌트는 `components/` 디렉토리에
+- 페이지별 컴포넌트는 해당 페이지 폴더 내부에
+- 공통 UI 컴포넌트는 `components/ui/` 디렉토리에
+
+## Tailwind CSS 규칙
+
+### 클래스 사용
+- 인라인 스타일 대신 Tailwind 유틸리티 클래스를 사용하세요
+- 반복되는 스타일은 컴포넌트로 추출하세요
+- 커스텀 클래스는 `globals.css`에 정의하세요
+
+### 클래스 순서
+- 레이아웃 → 스페이싱 → 타이포그래피 → 색상 → 기타 순서로 작성하세요
+- 긴 클래스 목록은 여러 줄로 나누고, 관련된 클래스끼리 그룹화하세요
+
+### 반응형 디자인
+- 모바일 퍼스트 접근 방식을 사용하세요
+- `sm:`, `md:`, `lg:`, `xl:`, `2xl:` 브레이크포인트를 활용하세요
+
+### 다크 모드
+- `dark:` 접두사를 사용하여 다크 모드 스타일을 정의하세요
+
+### 예시
+```typescript
+// 좋은 예
+<div className="
+  flex flex-col items-center gap-4
+  px-4 py-8
+  text-lg font-semibold
+  text-gray-900 dark:text-gray-100
+  bg-white dark:bg-gray-800
+  rounded-lg shadow-md
+  sm:flex-row sm:px-8
+">
+  {children}
+</div>
+
+// 나쁜 예
+<div style={{ display: 'flex', padding: '16px' }}>
+  {children}
+</div>
+```
+
+## 코드 스타일
+
+### Import 순서
+1. React 및 Next.js 관련
+2. 외부 라이브러리
+3. 내부 컴포넌트
+4. 유틸리티 함수
+5. 타입 정의
+6. 스타일 파일
+
+### 예시
+```typescript
+import { useState } from 'react';
+import Image from 'next/image';
+
+import { Button } from '@/components/Button';
+import { formatDate } from '@/utils/date';
+
+import type { User } from '@/types/user';
+import './styles.css';
+```
+
+### 네이밍 컨벤션
+- 컴포넌트: PascalCase (`UserProfile`)
+- 함수/변수: camelCase (`getUserData`)
+- 상수: UPPER_SNAKE_CASE (`API_BASE_URL`)
+- 타입/인터페이스: PascalCase (`UserData`)
+
+## 파일 구조 권장사항
+
+```
+app/
+  layout.tsx
+  page.tsx
+  globals.css
+components/
+  ui/
+    Button.tsx
+    Input.tsx
+  layout/
+    Header.tsx
+    Footer.tsx
+lib/
+  utils.ts
+types/
+  index.ts
+public/
+  images/
+```
+
+## 기타 규칙
+
+- ESLint 규칙을 준수하세요
+- 커밋 메시지는 한국어로 작성하세요
+- 코드 리뷰 전에 타입 체크와 린트를 실행하세요
+- 불필요한 주석은 제거하고, 복잡한 로직에만 주석을 추가하세요
+- 컴포넌트를 만들 때 framer-motion을 사용하세요
+- 적절한 애니메이션을 넣으세요.
+- 인터렉티브하게 컴포넌트를 생성하세요.
