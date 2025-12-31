@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Noto_Sans } from 'next/font/google';
 import './globals.css';
+import { cn } from '@/lib/utils';
 
 const notoSans = Noto_Sans({
   weight: ['400', '500', '700', '900'],
@@ -21,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={notoSans.className}>{children}</body>
+      <body className={cn(notoSans.className, 'bg-black')}>{children}</body>
     </html>
   );
 }
